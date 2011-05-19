@@ -3,6 +3,8 @@ package com.lhs.qrblue;
 //import android.R;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -50,10 +52,12 @@ public class QrBlue extends Activity {
                 	Log.v(Tag, "Connecting to"  + list[1]);
                 	BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
                 	BluetoothDevice btd = bta.getRemoteDevice (list[1]);
-                	
+                	Method m;
                 	Log.v(Tag, btd.getName() );
                 	try {
-                		BluetoothSocket bts = btd.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+                		m = btd.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+						BluetoothSocket bts = (BluetoothSocket)m.invoke(btd, Integer.valueOf(1));
+                		//BluetoothSocket bts = btd.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
 						try{
 							bts.connect();
 							OutputStream btos= bts.getOutputStream();
@@ -67,7 +71,22 @@ public class QrBlue extends Activity {
 				            }
 							
 						}
-					} catch (IOException e) {
+					} /* catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}*/ catch (SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchMethodException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} 
